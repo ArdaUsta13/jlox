@@ -14,13 +14,15 @@ class Scanner {
   private int current = 0;
   private int line = 1;
 
+
+  // Constructor for Scanner class
   Scanner(String source) {
     this.source = source;
   }
 
-  private static final Map<String, TokenType> keywords;
+  private static final Map<String, TokenType> keywords; // we've used static here since we need them no matter what
 
-  static {
+  static { // this is a flexible way to initilaize our static map when class loads (it gives us flexibility like: if (System.getenv("ENABLE_EXPERIMENTAL") != null) then put. ...)
     keywords = new HashMap<>();
     keywords.put("and",    AND);
     keywords.put("class",  CLASS);
@@ -47,12 +49,13 @@ class Scanner {
       scanToken();
     }
 
+    // we are adding EOF file for some elegancy
     tokens.add(new Token(EOF, "", null, line));
     return tokens;
   }
 
   private void scanToken() {
-    char c = advance();
+    char c = advance(); // gives us the current char 
     switch (c) {
       case '(': addToken(LEFT_PAREN); break;
       case ')': addToken(RIGHT_PAREN); break;
@@ -76,7 +79,7 @@ class Scanner {
       case '>':
         addToken(match('=') ? GREATER_EQUAL : GREATER);
         break;
-      case '/': // it's distinct from other single-symbols cause comment thing
+      case '/': // it's distinct from other single-symbols cause of single-line comments
         if (match('/')) {
           // A comment goes until the end of the line.
           while (peek() != '\n' && !isAtEnd()) advance();
@@ -92,34 +95,33 @@ class Scanner {
               // Ensure we don't overshoot if we reached the end of the input
               advance(); // Consume '*'
               advance(); // Consume '/'
-            } 
+            }
+
         } else {
           addToken(SLASH);
-        }
-        break;
+        } break;
         
-        case ' ':
-        case '\r':
-        case '\t':
-          // Ignore whitespace.
-          break;
+      case ' ':
+      case '\r':
+      case '\t':
+        // To ignore whitespace.
+        break;
 
-        case '\n':
-          line++;
-          break;
+      case '\n':
+        line++;
+        break;
           
-        case '"': string(); break;
+      case '"': string(); break;
 
 
-        default:
-          if (isDigit(c)) {
-            number();
-          } else if (isAlpha(c)) {
-            identifier();
+      default:
+        if (isDigit(c)) {
+          number();
+        } else if (isAlpha(c)) {
+          identifier();
         } else {
           Lox.error(line, "Unexpected character.");
         }
-
     }
   }
 
@@ -211,7 +213,7 @@ class Scanner {
   }
 
   private void addToken(TokenType type, Object literal) {
-    String text = source.substring(start, current);
+    String text = source.substring(start, current); // slices the token from the text
     tokens.add(new Token(type, text, literal, line));
   }
 

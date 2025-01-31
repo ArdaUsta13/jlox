@@ -22,6 +22,7 @@ public class Lox {
     }
   }
 
+  // for normal interpretation like python test.py
   private static void runFile(String path) throws IOException {
     byte[] bytes = Files.readAllBytes(Paths.get(path));
     run(new String(bytes, Charset.defaultCharset()));
