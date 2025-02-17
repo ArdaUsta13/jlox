@@ -80,6 +80,14 @@ class Scanner {
                 if (match('/')) {
                     // passes the whole comment line (single line)
                     while (peek() != '\n' && !isAtEnd()) advance();
+                } else if (match('*')) {
+                      while (peek() != '*' && peekNext() != '/' && !isAtEnd()) {
+                          if (source.charAt(current) == '\n') line++;
+                          advance();
+                      }
+                      // to skip */
+                      advance();
+                      advance();
                 } else {
                     addToken(SLASH);
                 }
